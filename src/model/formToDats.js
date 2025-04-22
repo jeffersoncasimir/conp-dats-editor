@@ -3,6 +3,8 @@ import { format, parseISO, isValid } from 'date-fns'
 class FormToDats {
   constructor(data) {
     this.data = data
+
+    console.log('built with data', data)
   }
 
   getJson() {
@@ -445,6 +447,15 @@ class FormToDats {
           ]
         }
       )
+
+    // LORIS START
+    if (this.data.loris) {
+      json.extraProperties.push({
+        category: 'LORIS',
+        values: this.data.loris
+      })
+    }
+    // LORIS END
 
     if (json.isAbout.length === 0) {
       delete json.isAbout

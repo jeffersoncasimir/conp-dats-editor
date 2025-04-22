@@ -38,6 +38,9 @@ import {
   defaultDatsValues
 } from './model/datsSpec'
 
+// TODO: Generic import (* from index)
+import { lorisDatsSchema, defaultLorisDatsValues } from './model/loris_datsSpec'
+
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: 'relative'
@@ -164,7 +167,10 @@ export function DatsEditorForm(props) {
   const classes = useStyles()
   const [activeStep, setActiveStep] = React.useState(initialActiveStep || 0)
   const [dats, setDats] = React.useState()
-  const [valuesState, setValuesState] = React.useState(defaultDatsValues)
+  const [valuesState, setValuesState] = React.useState({
+    ...defaultDatsValues,
+    loris: defaultLorisDatsValues
+  })
   const [isExperiment, setIsExperiment] = React.useState(false)
   const steps = isExperiment ? experimentSteps : datasetSteps
   const postDatsSteps = isExperiment ? 2 : 2
@@ -322,6 +328,7 @@ export function DatsEditorForm(props) {
         const childDivElement = parentDivElement.querySelector('div')
 
         childDivElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
         if (childDivElement.focus) {
           childDivElement.focus()
           childDivElement.blur()
@@ -468,7 +475,7 @@ export function DatsEditorForm(props) {
   }
 
   const handleClear = () => {
-    setValuesState(defaultDatsValues)
+    setValuesState({ ...defaultDatsValues, ...defaultLorisDatsValues })
     setActiveStep(0)
     window.scrollTo(0, 0)
   }
@@ -524,7 +531,10 @@ export function DatsEditorForm(props) {
               setSubmitting(false)
             }}
             validateOnChange
-            validationSchema={validationSchema || defaultDatsValidationSchema}
+            validationSchema={
+              validationSchema ||
+              defaultDatsValidationSchema.concat(lorisDatsSchema)
+            }
           >
             {({
               values,

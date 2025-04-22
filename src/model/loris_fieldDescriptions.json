@@ -1,0 +1,133 @@
+{
+  "loris": {
+    "name": "LORIS",
+    "description": {
+      "dataset": "Parameters expected for submitting a project to LORIS",
+      "experiment": "Parameters expected for submitting a dataset to LORIS"
+    }
+  },
+
+  "loris.lorisId": {
+    "name": "LORIS ID",
+    "description": {
+      "dataset": "LORIS Identifier. Ex: LORISID99999",
+      "experiment": "LORIS Identifier. Ex: LORISID99999"
+    }
+  },
+  "loris.externalId": {
+    "name": "External ID",
+    "description": {
+      "dataset": "External Identifier. Ex: EXTID9999",
+      "experiment": "External Identifier. Ex: EXTID9999"
+    }
+  },
+  "loris.shortName": {
+    "name": "Short Name",
+    "description": {
+      "dataset": "Human-friendly Identifier",
+      "experiment": "Human-friendly Identifier"
+    }
+  },
+  "loris.alias": {
+    "name": "Alias",
+    "description": {
+      "dataset": "Dataset code. Typically 3-4 letters",
+      "experiment": "Experiment code. Typically 3-4 letters"
+    }
+  },
+  "loris.candidateAgeMin": {
+    "name": "Candidate Minimum Age",
+    "description": {
+      "dataset": "Minimum age of data sample",
+      "experiment": "Minimum age of data sample"
+    }
+  },
+  "loris.candidateAgeMax": {
+    "name": "Candidate Maximum Age",
+    "description": {
+      "dataset": "Maximum age of data sample",
+      "experiment": "Maximum age of data sample"
+    }
+  },
+
+  "loris.visits": {
+    "name": "Visits",
+    "description": {
+      "dataset": "List of visits",
+      "experiment": "List of visits"
+    },
+    "fieldName": "visit"
+  },
+  "loris.visits.visitLabel": {
+    "name": "Visit Label",
+    "description": {
+      "dataset": "Visit Label (BIDS session)",
+      "experiment": "Visit Label"
+    }
+  },
+  "loris.visits.windowMinDays": {
+    "name": "Minimum Window",
+    "description": {
+      "dataset": "Minimum visit window (days)",
+      "experiment": "Minimum visit window (days)"
+    }
+  },
+  "loris.visits.windowMaxDays": {
+    "name": "Maximum Window",
+    "description": {
+      "dataset": "Maximum visit window (days)",
+      "experiment": "Maximum visit window (days)"
+    }
+  },
+  "loris.visits.optimumMinDays": {
+    "name": "Optimum Minimum Window",
+    "description": {
+      "dataset": "Optimal minimum visit window (days)",
+      "experiment": "Optimal minimum visit window (days)"
+    }
+  },
+  "loris.visits.optimumMaxDays": {
+    "name": "Optimum Maximum Window",
+    "description": {
+      "dataset": "Optimal maximum visit window (days)",
+      "experiment": "Optimal maximum visit window (days)"
+    }
+  },
+  "loris.visits.windowMidpointDays": {
+    "name": "Window Midpoint",
+    "description": {
+      "dataset": "Midpoint of visit window (days)",
+      "experiment": "Midpoint of visit window (days)"
+    }
+  },
+
+  "loris.instruments": {
+    "name": "Instruments",
+    "description": {
+      "dataset": "List of instruments",
+      "experiment": "List of instruments"
+    },
+    "fieldName": "instrument"
+  },
+  "loris.instruments.name": {
+    "name": "Name",
+    "description": {
+      "dataset": "Instrument name",
+      "experiment": "Instrument name"
+    }
+  },
+  "loris.instruments.label": {
+    "name": "Label",
+    "description": {
+      "dataset": "Public label for instrument",
+      "experiment": "Public label for instrument"
+    }
+  },
+  "loris.instruments.survey": {
+    "name": "Survey",
+    "description": {
+      "dataset": "Whether the instrument is a survey",
+      "experiment": "Whether the instrument is a survey"
+    }
+  }
+}

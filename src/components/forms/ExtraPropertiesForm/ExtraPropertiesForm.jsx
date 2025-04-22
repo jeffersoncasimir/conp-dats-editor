@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Button,
   Divider,
@@ -24,7 +24,9 @@ import FieldGroup from '../../layout/FieldGroup'
 import CustomTextField from '../../fields/CustomTextField'
 import CustomRadioGroup from '../../fields/CustomRadioGroup'
 import CustomSelectField from '../../fields/CustomSelectField'
+import CustomCheckbox from '../../fields/CustomCheckbox'
 import fieldDescriptions from '../../../model/fieldDescriptions.json'
+import LorisPropertiesForm from './LorisPropertiesForm'
 
 const useStyles = makeStyles((theme) => ({
   select: {
@@ -48,6 +50,8 @@ export default function ExtraPropertiesForm(props) {
     (val, index) => currentYear - index
   )
   const classes = useStyles()
+
+  const [useLoris, setUseLoris] = useState(false)
 
   useEffect(() => {
     values.primaryPublications.forEach((publication, index) => {
@@ -75,6 +79,27 @@ export default function ExtraPropertiesForm(props) {
 
   return (
     <React.Fragment>
+      {/* LORIS START */}
+      <Section>
+        <CustomCheckbox
+          checked={useLoris}
+          id='useLoris'
+          onClick={() => setUseLoris(!useLoris)}
+        >
+          Intended for LORIS
+        </CustomCheckbox>
+      </Section>
+
+      {useLoris ? (
+        <Section>
+          <LorisPropertiesForm isExperiment={isExperiment} />
+
+          <Divider variant='middle' />
+        </Section>
+      ) : null}
+
+      {/* LORIS END */}
+
       <Section>
         <JsonSectionTitle
           isExperiment={isExperiment}
@@ -644,7 +669,6 @@ export default function ExtraPropertiesForm(props) {
       )}
 
       <Divider variant='middle' /> */}
-
       <Section>
         <JsonSectionTitle
           isExperiment={isExperiment}

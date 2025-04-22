@@ -215,6 +215,18 @@ class DatsToForm {
         })
       })
     })
+
+    // LORIS START
+    const lorisCategory = this.data.extraProperties.find((extraProperty) => {
+      return extraProperty.category === 'LORIS'
+    })
+
+    if (lorisCategory && lorisCategory.values) {
+      json.loris = lorisCategory.values[0]
+    }
+    console.log('json', json)
+    // LORIS END
+
     return json
   }
 }
