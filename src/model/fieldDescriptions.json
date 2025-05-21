@@ -79,7 +79,10 @@
     "fieldName": "keyword"
   },
   "formats": {
-    "name": { "dataset": "Formats", "experiment": "Formats (Recommended)" },
+    "name": {
+      "dataset": "Formats",
+      "experiment": "Formats (Recommended)"
+    },
     "description": {
       "dataset": "The technical format of the dataset distribution. Use the file extension or MIME type when possible. (Definition adapted from DataCite).",
       "experiment": "The technical format of the data generated from the experiment. Use the file extension or MIME type when possible. (Definition adapted from DataCite)."
@@ -96,7 +99,12 @@
   "units": {
     "name": "Units",
     "description": "Unit in which the size is measured.(KB -> KiloByte, MB -> MegaByte, GB -> GigaByte, TB -> TeraByte and PB -> PetaByte).",
-    "items": { "MB": "MB", "GB": "GB", "TB": "TB", "PB": "PB" }
+    "items": {
+      "MB": "MB",
+      "GB": "GB",
+      "TB": "TB",
+      "PB": "PB"
+    }
   },
   "access": {
     "name": "Access",
@@ -128,11 +136,25 @@
       "experiment": "Total number of files in the experiment."
     }
   },
+  "filesProjected": {
+    "name": "Projected Number of Files",
+    "description": {
+      "dataset": "Total projected number of files to be in the dataset.",
+      "experiment": "Total projected number of files to be in the experiment."
+    }
+  },
   "subjects": {
     "name": "Number of Subjects",
     "description": {
       "dataset": "Total number of subjects constituting the dataset. As well as numbers, \"N/A\" is a valid value in cases where this does not apply, eg, expression of human proteins in microbial systems.",
       "experiment": "Total number of subjects constituting the experiment. If not applicable, please uncheck the box."
+    }
+  },
+  "subjectsProjected": {
+    "name": "Projected Number of Subjects",
+    "description": {
+      "dataset": "Total projected number of subjects constituting the dataset. As well as numbers, \"N/A\" is a valid value in cases where this does not apply, eg, expression of human proteins in microbial systems.",
+      "experiment": "Total projected number of subjects constituting the experiment. If not applicable, please uncheck the box."
     }
   },
   "conpStatus": {
@@ -141,7 +163,11 @@
       "dataset": "The CONP status is used to add the CONP logo or Canadian flag on the left of the dataset and sorting in the data search. Valid values are \"CONP\" = created using funding from the CONP; \"Canadian\" = created in Canada without CONP funding; \"external\" = created outside of Canada.",
       "experiment": "The CONP status is used to add the CONP logo or Canadian flag on the left of the experiment and sorting in the data search. Valid values are \"CONP\" = created using funding from the CONP; \"Canadian\" = created in Canada without CONP funding; \"external\" = created outside of Canada."
     },
-    "items": { "CONP": "CONP", "Canadian": "Canadian", "external": "External" }
+    "items": {
+      "CONP": "CONP",
+      "Canadian": "Canadian",
+      "external": "External"
+    }
   },
   "origin": {
     "name": "Origin",
@@ -310,7 +336,9 @@
   },
   "producedBy": {
     "name": "Produced By",
-    "description": { "dataset": "Process which generated a given dataset." }
+    "description": {
+      "dataset": "Process which generated a given dataset."
+    }
   },
   "isAbout": {
     "name": "Is About",
@@ -443,11 +471,15 @@
   },
   "experimentsValidation": {
     "name": "Validation",
-    "description": { "experiment": "Validation measure(s) and population(s)" }
+    "description": {
+      "experiment": "Validation measure(s) and population(s)"
+    }
   },
   "experimentsValidationMeasures": {
     "name": "Validation measures",
-    "description": { "experiment": "Measures used to validate the experiment" },
+    "description": {
+      "experiment": "Measures used to validate the experiment"
+    },
     "items": {
       "Construct validity": "Construct validity",
       "Convergent validity": "Convergent validity",

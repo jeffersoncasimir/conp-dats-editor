@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Divider } from '@material-ui/core'
-import { Field, useFormikContext } from 'formik'
+import { Field } from 'formik'
 import { Checkbox } from 'formik-material-ui'
 import Section from '../../layout/Section'
 import FieldArraySection from '../../layout/FieldArraySection'
@@ -12,18 +12,6 @@ import fieldDescriptions from '../../../model/fieldDescriptions.json'
 
 export default function DistributionForm(props) {
   const { values, isExperiment } = props
-  const {
-    values: formikValues,
-    setFieldValue,
-    validateForm
-  } = useFormikContext()
-  useEffect(() => {
-    if (formikValues.privacy === 'open') {
-      setFieldValue('reb_info', '').then(() => {
-        validateForm()
-      })
-    }
-  }, [formikValues.privacy, setFieldValue, validateForm])
 
   return (
     <React.Fragment>
@@ -50,7 +38,7 @@ export default function DistributionForm(props) {
           isRequired
           nameAttr='size.value'
           setupProps={fieldDescriptions.size}
-          value={values.size.value}
+          value={values.size}
         />
 
         <JsonSectionTitle
@@ -65,7 +53,7 @@ export default function DistributionForm(props) {
           isRequired
           nameAttr='size.units'
           setupProps={fieldDescriptions.units}
-          value={values.size.units}
+          value={values.size.units.value}
         />
       </Section>
 
@@ -111,14 +99,33 @@ export default function DistributionForm(props) {
 
       <Divider variant='middle' />
 
-      <SingleFieldSection
-        fullWidth
-        isExperiment={isExperiment}
-        isRequired
-        jsonField={JsonTextField}
-        nameAttr='files'
-        setupProps={fieldDescriptions.files}
-      />
+      <Section>
+        <JsonSectionTitle
+          isExperiment={isExperiment}
+          isRequired
+          setupProps={fieldDescriptions.files}
+        />
+
+        <JsonTextField
+          isExperiment={isExperiment}
+          isRequired
+          nameAttr='files.counted'
+          setupProps={fieldDescriptions.files}
+          value={values.size}
+        />
+
+        <JsonSectionTitle
+          isExperiment={isExperiment}
+          setupProps={fieldDescriptions.filesProjected}
+        />
+
+        <JsonTextField
+          isExperiment={isExperiment}
+          nameAttr='files.projected'
+          setupProps={fieldDescriptions.filesProjected}
+          value={values.size}
+        />
+      </Section>
 
       <Divider variant='middle' />
 
@@ -141,14 +148,29 @@ export default function DistributionForm(props) {
         ) : null}
 
         {values.subjects.applicable ? (
-          <JsonTextField
-            fullWidth
-            isExperiment={isExperiment}
-            isRequired
-            nameAttr='subjects.value'
-            setupProps={fieldDescriptions.subjects}
-            value={values.subjects.value}
-          />
+          <React.Fragment>
+            <JsonTextField
+              fullWidth
+              isExperiment={isExperiment}
+              isRequired
+              nameAttr='subjects.counted'
+              setupProps={fieldDescriptions.subjects}
+              value={values.subjects.counted}
+            />
+
+            <JsonSectionTitle
+              isExperiment={isExperiment}
+              setupProps={fieldDescriptions.subjectsProjected}
+            />
+
+            <JsonTextField
+              fullWidth
+              isExperiment={isExperiment}
+              nameAttr='subjects.projected'
+              setupProps={fieldDescriptions.subjectsProjected}
+              value={values.subjects.projected}
+            />
+          </React.Fragment>
         ) : null}
       </Section>
 

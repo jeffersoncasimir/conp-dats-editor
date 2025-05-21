@@ -144,10 +144,20 @@ const defaultDatsValidationSchema = yup.object({
       excludeEmptyString: true
     })
     .required(),
-  files: yup.number().integer().positive().required(),
+  files: yup.object({
+    counted: yup.number().positive().required(),
+    projected: yup.number().positive()
+  }),
   subjects: yup.object({
     applicable: yup.boolean(),
-    value: yup.number().integer().positive().nullable()
+    counted: yup.number().positive().nullable(),
+    projected: yup.number().positive().nullable()
+  }),
+  origin: yup.object({
+    institution: yup.string(),
+    city: yup.string(),
+    province: yup.string(),
+    country: yup.string()
   }),
   conpStatus: yup
     .string()
@@ -208,17 +218,20 @@ const defaultDatsValidationSchema = yup.object({
   refinement: yup.string(),
   aggregation: yup.string(),
   spatialCoverage: yup.array().of(yup.string()),
-  reb_info: yup.string().when('privacy', {
-    is: (privacy) => ['registered', 'controlled', 'private'].includes(privacy),
-    then: yup.string(),
-    otherwise: yup
-      .string()
-      .oneOf(['option_1', 'option_2', 'option_3', 'option_4'])
-      .required(
-        'reb_info is required unless privacy is registered, controlled, or private.'
-      )
+  reb_info: yup.object({
+    option: yup.string().when('privacy', {
+      is: (privacy) =>
+        ['registered', 'controlled', 'private'].includes(privacy),
+      then: yup.string(),
+      otherwise: yup
+        .string()
+        .oneOf(['option_1', 'option_2', 'option_3', 'option_4'])
+        .required(
+          'reb_info is required unless privacy is registered, controlled, or private.'
+        )
+    }),
+    approvalNumber: yup.string()
   }),
-  reb_number: yup.string(),
   experimentsFunctionAssessed: yup.array().when('isExperiment', {
     is: true,
     then: yup.array().of(yup.string().required()),
@@ -291,7 +304,10 @@ const defaultDatsValues = {
     authorization: 'public'
   },
   privacy: '',
-  files: '',
+  files: {
+    counted: '',
+    projected: ''
+  },
   subjects: { applicable: true, value: '' },
   conpStatus: '',
   origin: {
@@ -310,8 +326,7 @@ const defaultDatsValues = {
   },
   logo: {
     type: 'url',
-    fileName: '',
-    url: ''
+    value: ''
   },
   registrationPageURL: '',
   dates: [],
@@ -328,8 +343,11 @@ const defaultDatsValues = {
   aggregation: '',
   spatialCoverage: [],
   attachments: [],
-  reb_info: '',
-  reb_number: '',
+  reb_info: {
+    option: '',
+    statement: '',
+    approvalNumber: ''
+  },
   experimentsFunctionAssessed: [],
   experimentsLanguages: [],
   experimentsValidationMeasures: [],

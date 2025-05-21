@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   Button,
   Divider,
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ExtraPropertiesForm(props) {
   const { values, setFieldValue } = useFormikContext()
-  const { isExperiment } = props
+  const { isExperiment, useLoris, setUseLoris } = props
   const isPrivacyOpen =
     values.privacy === 'registered' ||
     values.privacy === 'controlled' ||
@@ -50,8 +50,6 @@ export default function ExtraPropertiesForm(props) {
     (val, index) => currentYear - index
   )
   const classes = useStyles()
-
-  const [useLoris, setUseLoris] = useState(false)
 
   useEffect(() => {
     values.primaryPublications.forEach((publication, index) => {
@@ -91,11 +89,11 @@ export default function ExtraPropertiesForm(props) {
       </Section>
 
       {useLoris ? (
-        <Section>
+        <React.Fragment>
           <LorisPropertiesForm isExperiment={isExperiment} />
 
           <Divider variant='middle' />
-        </Section>
+        </React.Fragment>
       ) : null}
 
       {/* LORIS END */}
@@ -639,19 +637,13 @@ export default function ExtraPropertiesForm(props) {
 
         <CustomRadioGroup label='Type' name='logo.type'>
           <FormControlLabel control={<Radio />} label='URL' value='url' />
-
-          <FormControlLabel
-            control={<Radio />}
-            label='Filename'
-            value='fileName'
-          />
+          <FormControlLabel control={<Radio />} label='Filename' value='fileName' />
         </CustomRadioGroup>
 
-        {values.logo.type === 'url' ? (
-          <CustomTextField label='URL' name='logo.url' />
-        ) : (
-          <CustomTextField label='Path to File' name='logo.fileName' />
-        )}
+        <CustomTextField
+          label={values.logo.type === 'url' ? 'URL' : 'Path to File'}
+          name='logo.value'
+        />
       </Section>
 
       <Divider variant='middle' />
@@ -949,7 +941,7 @@ export default function ExtraPropertiesForm(props) {
         <CustomSelectField
           disabled={isPrivacyOpen} // Griser le champ si privacy est 'open'
           label='Select a statement *'
-          name='reb_info'
+          name='reb_info.option'
           style={{
             minWidth: 200,
             maxWidth: 700
@@ -1013,7 +1005,7 @@ export default function ExtraPropertiesForm(props) {
           <CustomTextField
             disabled={isPrivacyOpen} // Griser le champ si privacy est 'open'
             label='Ethics committee approval number'
-            name='reb_number'
+            name='reb_info.approvalNumber'
           />
         )}
       </Section>

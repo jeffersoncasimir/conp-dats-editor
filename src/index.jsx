@@ -38,7 +38,6 @@ import {
   defaultDatsValues
 } from './model/datsSpec'
 
-// TODO: Generic import (* from index)
 import { lorisDatsSchema, defaultLorisDatsValues } from './model/loris_datsSpec'
 
 const useStyles = makeStyles((theme) => ({
@@ -104,63 +103,6 @@ const experimentSteps = [
   'Readme Editor'
 ]
 
-function renderStep(step, classes, values, dats, isExperiment, nextClicked) {
-  switch (step) {
-    case experimentSteps[0]:
-      return (
-        <GeneralForm
-          classes={classes}
-          isExperiment={isExperiment}
-          nextClicked={nextClicked}
-          values={values}
-        />
-      )
-    case experimentSteps[1]:
-      return (
-        <DistributionForm
-          classes={classes}
-          isExperiment={isExperiment}
-          values={values}
-        />
-      )
-    case experimentSteps[2]:
-      return (
-        <ExtraPropertiesForm
-          classes={classes}
-          isExperiment={isExperiment}
-          values={values}
-        />
-      )
-    case experimentSteps[3]:
-      return (
-        <ExperimentsForm
-          classes={classes}
-          isExperiment={isExperiment}
-          values={values}
-        />
-      )
-    case experimentSteps[4]:
-      return (
-        <CreateDatsSuccess
-          classes={classes}
-          dats={dats}
-          isExperiment={isExperiment}
-          values={values}
-        />
-      )
-    case experimentSteps[5]:
-      return (
-        <ReadmeEditor
-          buttonClass={classes.button}
-          readmeStart={genDefaultReadme(values)}
-          wrapperClass={classes.wrapper}
-        />
-      )
-    default:
-      throw new Error('Unknown step')
-  }
-}
-
 /* eslint max-statements: "off" */
 export function DatsEditorForm(props) {
   const { validationSchema, initialActiveStep } = props
@@ -172,6 +114,7 @@ export function DatsEditorForm(props) {
     loris: defaultLorisDatsValues
   })
   const [isExperiment, setIsExperiment] = React.useState(false)
+  const [useLoris, setUseLoris] = React.useState(false)
   const steps = isExperiment ? experimentSteps : datasetSteps
   const postDatsSteps = isExperiment ? 2 : 2
   const [nextClicked, setNextClicked] = React.useState(false)
@@ -195,6 +138,13 @@ export function DatsEditorForm(props) {
     } else {
       setIsExperiment(false)
     }
+
+    setUseLoris(
+      Object.keys(formData).includes('loris') &&
+        Object.keys(formData.loris).some((field) => {
+          return formData.loris[field] !== defaultLorisDatsValues[field]
+        })
+    )
   }
 
   const handleRadioChange = (event) => {
@@ -206,7 +156,8 @@ export function DatsEditorForm(props) {
     if (!isExperiment) {
       const fieldsToRemove = {
         1: ['size', 'access', 'files', 'conpStatus'],
-        2: ['reb_info', 'contact', 'primaryPublications', 'subjects']
+        2: ['reb_info', 'contact', 'primaryPublications', 'subjects'],
+        3: ['loris']
       }
 
       Object.entries(fieldsToRemove).forEach(([step, fields]) => {
@@ -249,6 +200,64 @@ export function DatsEditorForm(props) {
     }
 
     return modifiedErrors
+  }
+  function renderStep(step, values) {
+    switch (step) {
+      case experimentSteps[0]:
+        return (
+          <GeneralForm
+            classes={classes}
+            isExperiment={isExperiment}
+            nextClicked={nextClicked}
+            values={values}
+          />
+        )
+      case experimentSteps[1]:
+        return (
+          <DistributionForm
+            classes={classes}
+            isExperiment={isExperiment}
+            values={values}
+          />
+        )
+      case experimentSteps[2]:
+        return (
+          <ExtraPropertiesForm
+            classes={classes}
+            isExperiment={isExperiment}
+            setUseLoris={setUseLoris}
+            useLoris={useLoris}
+            values={values}
+          />
+        )
+      case experimentSteps[3]:
+        return (
+          <ExperimentsForm
+            classes={classes}
+            isExperiment={isExperiment}
+            values={values}
+          />
+        )
+      case experimentSteps[4]:
+        return (
+          <CreateDatsSuccess
+            classes={classes}
+            dats={dats}
+            isExperiment={isExperiment}
+            values={values}
+          />
+        )
+      case experimentSteps[5]:
+        return (
+          <ReadmeEditor
+            buttonClass={classes.button}
+            readmeStart={genDefaultReadme(values)}
+            wrapperClass={classes.wrapper}
+          />
+        )
+      default:
+        throw new Error('Unknown step')
+    }
   }
 
   // eslint-disable-next-line complexity
@@ -475,7 +484,7 @@ export function DatsEditorForm(props) {
   }
 
   const handleClear = () => {
-    setValuesState({ ...defaultDatsValues, ...defaultLorisDatsValues })
+    setValuesState({ ...defaultDatsValues, loris: defaultLorisDatsValues })
     setActiveStep(0)
     window.scrollTo(0, 0)
   }
@@ -602,14 +611,7 @@ export function DatsEditorForm(props) {
                   </React.Fragment>
                 ) : null}
 
-                {renderStep(
-                  steps[activeStep],
-                  classes,
-                  values,
-                  dats,
-                  isExperiment,
-                  nextClicked
-                )}
+                {renderStep(steps[activeStep], values)}
 
                 <div className={classes.buttons}>
                   {activeStep < 3 || (isExperiment && activeStep < 4) ? (

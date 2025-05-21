@@ -16,7 +16,7 @@ export default function LorisPropertiesForm(props) {
   const { isExperiment } = props
 
   return (
-    <Section>
+    <React.Fragment>
       <JsonSectionTitle
         isExperiment={isExperiment}
         isRequired
@@ -24,7 +24,7 @@ export default function LorisPropertiesForm(props) {
       />
 
       {Object.keys(defaultLorisDatsValues).map((fieldName) => {
-        const schemaField = lorisDatsSchema.fields[fieldName]
+        const schemaField = lorisDatsSchema.fields.loris.fields[fieldName]
 
         if (schemaField.type === 'array') {
           return (
@@ -35,7 +35,11 @@ export default function LorisPropertiesForm(props) {
               setupProps={lorisFieldDescriptions[`${groupName}.${fieldName}`]}
               shape={schemaField.innerType}
               shapeFieldName={`${groupName}.${fieldName}`}
-              values={values[groupName][fieldName] ?? []}
+              values={
+                values[groupName] && values[groupName][fieldName]
+                  ? values[groupName][fieldName]
+                  : []
+              }
             />
           )
         }
@@ -49,6 +53,6 @@ export default function LorisPropertiesForm(props) {
           />
         )
       })}
-    </Section>
+    </React.Fragment>
   )
 }

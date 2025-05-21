@@ -3,8 +3,6 @@ import { format, parseISO, isValid } from 'date-fns'
 class FormToDats {
   constructor(data) {
     this.data = data
-
-    console.log('built with data', data)
   }
 
   getJson() {
@@ -32,12 +30,14 @@ class FormToDats {
           c.name = c.fullName
           delete c.fullName
         }
-        if (creator.role)
-          c.roles = [
-            {
-              value: creator.role
-            }
-          ]
+        /*
+         * If (creator.role)
+         *   c.roles = [
+         *     {
+         *       value: creator.role
+         *     }
+         *   ]
+         */
         if (c.type === 'Person' && creator.orcid) {
           c.extraProperties = [
             {
@@ -50,9 +50,12 @@ class FormToDats {
             }
           ]
         }
-        delete c.type
-        delete c.role
-        delete c.orcid
+        /*
+         * Why delete? Messes up form
+         * delete c.type
+         * delete c.role
+         * delete c.orcid
+         */
         return c
       }),
       types: this.data.types.map((type) => {
@@ -167,295 +170,73 @@ class FormToDats {
         return {
           value: keyword
         }
-      }),
-
-      extraProperties: []
-    }
-
-    const extraProperties = [
-      {
-        category: 'subjects',
-        values: [
-          {
-            // Value: this.data.subjects.applicable ? this.data.subjects.value : 'N/A'
-            value:
-              this.data.subjects.applicable && this.data.subjects.value !== null
-                ? this.data.subjects.value
-                : 'N/A'
-          }
-        ]
-      },
-      {
-        category: 'files',
-        values: [
-          {
-            value: this.data.files
-          }
-        ]
-      },
-      {
-        category: 'CONP_status',
-        values: [
-          {
-            value: this.data.conpStatus
-          }
-        ]
-      },
-      {
-        category: 'origin_city',
-        values: [
-          {
-            value: this.data.origin.city
-          }
-        ]
-      },
-      {
-        category: 'origin_province',
-        values: [
-          {
-            value: this.data.origin.province
-          }
-        ]
-      },
-      {
-        category: 'origin_country',
-        values: [
-          {
-            value: this.data.origin.country
-          }
-        ]
-      },
-      {
-        category: 'logo',
-        values: [
-          {
-            value:
-              this.data.logo.type === 'url'
-                ? this.data.logo.url
-                : this.data.logo.fileName
-          }
-        ]
-      },
-      {
-        category: 'registrationPage',
-        values: [
-          {
-            value: this.data.registrationPageURL
-          }
-        ]
-      },
-      {
-        category: 'contact',
-        values: [
-          {
-            value: `${this.data.contact.name}, ${this.data.contact.email}`
-          }
-        ]
-      },
-      {
-        category: 'derivedFrom',
-        values: [
-          {
-            value: this.data.derivedFrom
-          }
-        ]
-      },
-      {
-        category: 'parent_dataset_id',
-        values: [
-          {
-            value: this.data.parentDatasetId
-          }
-        ]
-      },
-      {
-        category: 'experimentFunctionAssessed',
-        values: this.data.experimentsFunctionAssessed.map((val) => {
-          return { value: val }
-        })
-      },
-      {
-        category: 'experimentLanguages',
-        values: this.data.experimentsLanguages.map((language) => {
-          return {
-            value: language
-          }
-        })
-      },
-      {
-        category: 'experimentValidationMeasures',
-        values: this.data.experimentsValidationMeasures.map((validation) => {
-          return {
-            value: validation
-          }
-        })
-      },
-      {
-        category: 'experimentValidationPopulations',
-        values: this.data.experimentsValidationPopulations.map((validation) => {
-          return {
-            value: validation
-          }
-        })
-      },
-      {
-        category: 'experimentAccessibility',
-        values: this.data.experimentsAccessibility.map((accessibility) => {
-          return {
-            value: accessibility
-          }
-        })
-      },
-      {
-        category: 'experimentModalities',
-        values: this.data.experimentsModalities.map((modality) => {
-          return {
-            value: modality
-          }
-        })
-      },
-      {
-        category: 'experimentRequiredDevices',
-        values: this.data.experimentsRequiredDevices.map((device) => {
-          return {
-            value: device
-          }
-        })
-      },
-      {
-        category: 'experimentRequiredSoftware',
-        values: this.data.experimentsRequiredSoftware.map((software) => {
-          return {
-            value: `${software.software} version ${software.version}`
-          }
-        })
-      },
-      {
-        category: 'experimentStimuli',
-        values: this.data.experimentsStimuli.map((stimulus) => {
-          return {
-            value: stimulus
-          }
-        })
-      },
-      {
-        category: 'experimentAdditionalRequirements',
-        values: [{ value: this.data.experimentsAdditionalRequirements }]
-      }
-    ]
-
-    const rebNumber = {
-      category: 'REB_number',
-      values: [
-        {
-          value: this.data.reb_number
-        }
-      ]
-    }
-
-    const ethicsStatement =
-      'In submitting this dataset for inclusion, I declare that '
-    if (this.data.reb_info === 'option_1') {
-      extraProperties.push(
-        {
-          category: 'REB_statement',
-          values: [
-            {
-              value:
-                `${ethicsStatement}participants have provided a valid informed consent to` +
-                ` the de-identification and deposit of their data` +
-                ` in an open-access portal.`
-            }
-          ]
-        },
-        rebNumber
-      )
-    } else if (this.data.reb_info === 'option_2') {
-      extraProperties.push(
-        {
-          category: 'REB_statement',
-          values: [
-            {
-              value:
-                `${ethicsStatement}a waiver or other authorization to deposit these` +
-                ` de-identified data in an open-access portal was` +
-                ` obtained from a research ethics body` +
-                ` (REB, IRB, REC, etc.).`
-            }
-          ]
-        },
-        rebNumber
-      )
-    } else if (this.data.reb_info === 'option_3') {
-      extraProperties.push(
-        {
-          category: 'REB_statement',
-          values: [
-            {
-              value:
-                `${ethicsStatement}local law or a relevant institutional authorization` +
-                ` otherwise enables the deposit of these data in an` +
-                ` open-access portal.`
-            }
-          ]
-        },
-        rebNumber
-      )
-    } else if (this.data.reb_info === 'option_4') {
-      extraProperties.push(
-        {
-          category: 'REB_statement',
-          values: [
-            {
-              value: `${ethicsStatement}these data are not derived from human participants.`
-            }
-          ]
-        },
-        rebNumber
-      )
-    }
-
-    extraProperties.forEach((p) => {
-      if (p.values.length > 0 && p.values[0].value) {
-        json.extraProperties.push(p)
-      }
-    })
-
-    if (this.data.origin.institution)
-      json.extraProperties.splice(
-        json.extraProperties.findIndex((e) => e.category === 'CONP_status') + 1,
-        0,
-        {
-          category: 'origin_institution',
-          values: [
-            {
-              value: this.data.origin.institution
-            }
-          ]
-        }
-      )
-    if (this.data.origin.consortium)
-      json.extraProperties.splice(
-        json.extraProperties.findIndex((e) => e.category === 'CONP_status') + 1,
-        0,
-        {
-          category: 'origin_consortium',
-          values: [
-            {
-              value: this.data.origin.consortium
-            }
-          ]
-        }
-      )
-
-    // LORIS START
-    if (this.data.loris) {
-      json.extraProperties.push({
-        category: 'LORIS',
-        values: this.data.loris
       })
     }
-    // LORIS END
+
+    const extraProperties = {
+      subjects: this.data.subjects,
+      files: this.data.files,
+      conpStatus: this.data.conpStatus,
+      origin: this.data.origin,
+      logo: this.data.logo,
+      registrationPageURL: this.data.registrationPageURL,
+      contact: this.data.contact,
+      derivedFrom: this.data.derivedFrom,
+      parentDatasetId: this.data.parentDatasetId,
+      experimentFunctionAssessed: this.data.experimentFunctionAssessed,
+      experimentLanguages: this.data.experimentLanguages,
+      experimentValidationMeasures: this.data.experimentValidationMeasures,
+      experimentValidationPopulations:
+        this.data.experimentValidationPopulations,
+      experimentAccessibility: this.data.experimentAccessibility,
+      experimentModalities: this.data.experimentModalities,
+      experimentRequiredDevices: this.data.experimentRequiredDevices,
+      experimentRequiredSoftware: this.data.experimentRequiredSoftware,
+      experimentStimuli: this.data.experimentStimuli,
+      experimentAdditionalRequirements:
+        this.data.experimentAdditionalRequirements,
+      loris: this.data.loris
+    }
+
+    if (this.data.privacy === 'open') {
+      let ethicsStatement =
+        'In submitting this dataset for inclusion, I declare that'
+
+      switch (this.data.reb_info.option) {
+        case 'option_1':
+          ethicsStatement +=
+            `${ethicsStatement} participants have provided a valid informed consent to` +
+            ` the de-identification and deposit of their data` +
+            ` in an open-access portal.`
+          break
+        case 'option_2':
+          ethicsStatement +=
+            `${ethicsStatement} a waiver or other authorization to deposit these` +
+            ` de-identified data in an open-access portal was` +
+            ` obtained from a research ethics body` +
+            ` (REB, IRB, REC, etc.).`
+          break
+        case 'option_3':
+          ethicsStatement +=
+            `${ethicsStatement} local law or a relevant institutional authorization` +
+            ` otherwise enables the deposit of these data in an` +
+            ` open-access portal.`
+          break
+        case 'option_4':
+          ethicsStatement += `${ethicsStatement} these data are not derived from human participants.`
+          break
+        default:
+          break
+      }
+
+      extraProperties.reb_info = {
+        ...this.data.reb_info,
+        option: this.data.reb_info.option,
+        statement: ethicsStatement
+      }
+    }
+
+    json.extraProperties = extraProperties
 
     if (json.isAbout.length === 0) {
       delete json.isAbout
@@ -483,6 +264,9 @@ class FormToDats {
     }
     if (json.primaryPublications.length === 0) {
       delete json.primaryPublications
+    }
+    if (json.extraProperties.loris.length === 0) {
+      delete json.extraProperties.loris
     }
 
     Object.keys(json).forEach((key) => json[key] === null && delete json[key])

@@ -1,9 +1,10 @@
+import { defaultDatsValidationSchema } from './datsSpec'
+import { defaultLorisDatsValues } from './loris_datsSpec'
+
 function readExtraProperties(data, category) {
-  return (
-    data.extraProperties
-      ?.filter((property) => property.category === category)[0]
-      ?.values.map((val) => val.value) || []
-  )
+  return Object.keys(data.extraProperties).includes(category)
+    ? data.extraProperties[category]
+    : { ...defaultDatsValidationSchema, ...defaultLorisDatsValues }[category]
 }
 
 class DatsToForm {
@@ -12,12 +13,6 @@ class DatsToForm {
   }
 
   getJson() {
-    const subjectsProperty = this.data.extraProperties?.find(
-      (p) => p.category === 'subjects'
-    ) || {
-      values: [{ value: 'N/A' }]
-    }
-
     const json = {
       title: this.data.title || '',
       creators:
@@ -31,21 +26,7 @@ class DatsToForm {
             orcid: a.extraProperties?.[0].values?.[0].value
           }
         }) || [],
-      contact:
-        this.data.extraProperties
-          .filter((p) => p.category === 'contact')[0]
-          ?.values.map((a) => {
-            const split = a.value.split(', ')
-            const contact = {
-              name: split[0]
-            }
-            split.forEach((v) => {
-              if (v.includes('@')) {
-                contact.email = v
-              }
-            })
-            return contact
-          })[0] || '',
+      contact: readExtraProperties(this.data, 'contact'),
       description: this.data.description || '',
       types: this.data.types.map((a) => a?.information?.value) || [],
       version: this.data.version || '',
@@ -63,52 +44,18 @@ class DatsToForm {
           'public'
       },
       privacy: this.data.privacy || '',
-      files:
-        this.data.extraProperties
-          ?.filter((p) => p.category === 'files')[0]
-          ?.values.map((a) => a.value)[0] || '',
-      subjects: {
-        applicable: subjectsProperty.values.length > 0,
-        value:
-          subjectsProperty.values.map((a) => {
-            const parsedValue = parseInt(a.value, 10)
-            return isNaN(parsedValue) || parsedValue <= 0 ? null : parsedValue
-          })[0] || null
-      },
-      conpStatus:
-        this.data.extraProperties
-          ?.filter((p) => p.category === 'CONP_status')[0]
-          ?.values.map((a) => a.value)[0] || '',
-      origin: {
-        institution:
-          this.data.extraProperties
-            ?.filter((p) => p.category === 'origin_institution')[0]
-            ?.values.map((a) => a.value)[0] || '',
-        consortium:
-          this.data.extraProperties
-            ?.filter((p) => p.category === 'origin_consortium')[0]
-            ?.values.map((a) => a.value)[0] || '',
-        city:
-          this.data.extraProperties
-            ?.filter((p) => p.category === 'origin_city')[0]
-            ?.values.map((a) => a.value)[0] || '',
-        province:
-          this.data.extraProperties
-            ?.filter((p) => p.category === 'origin_province')[0]
-            ?.values.map((a) => a.value)[0] || '',
-        country:
-          this.data.extraProperties
-            ?.filter((p) => p.category === 'origin_country')[0]
-            ?.values.map((a) => a.value)[0] || ''
-      },
-      derivedFrom:
-        this.data.extraProperties
-          ?.filter((p) => p.category === 'derivedFrom')[0]
-          ?.values.map((a) => a.value)[0] || '',
-      parentDatasetId:
-        this.data.extraProperties
-          ?.filter((p) => p.category === 'parent_dataset_id')[0]
-          ?.values.map((a) => a.value)[0] || '',
+      files: readExtraProperties(this.data, 'files'),
+      subjects: readExtraProperties(this.data, 'subjects'),
+      origin: readExtraProperties(this.data, 'origin'),
+      conpStatus: readExtraProperties(this.data, 'conpStatus'),
+      // derivedFrom:
+      //   this.data.extraProperties
+      //     ?.filter((p) => p.category === 'derivedFrom')[0]
+      //     ?.values.map((a) => a.value)[0] || '',
+      // parentDatasetId:
+      //   this.data.extraProperties
+      //     ?.filter((p) => p.category === 'parent_dataset_id')[0]
+      //     ?.values.map((a) => a.value)[0] || '',
       primaryPublications: this.data.primaryPublications || [],
       dimensions:
         this.data.dimensions?.map((a) => {
@@ -121,15 +68,11 @@ class DatsToForm {
         identifier: '',
         identifierSource: ''
       },
-      logo:
-        this.data.extraProperties
-          ?.filter((p) => p.category === 'logo')[0]
-          ?.values.map((a) => a.value)[0] || '',
-      registrationPageURL:
-        this.data.extraProperties
-          .filter((prop) => prop.category === 'registrationPage')
-          .flatMap((prop) => prop.values)
-          .map((val) => val.value)[0] || '',
+      logo: readExtraProperties(this.data, 'logo'),
+      registrationPageURL: readExtraProperties(
+        this.data,
+        'registrationPageURL'
+      ),
       dates:
         this.data.dates?.map((dateVal) => ({
           date: dateVal.date,
@@ -155,10 +98,9 @@ class DatsToForm {
       aggregation: this.data.aggregation || '',
       spatialCoverage: this.data.spatialCoverage || [],
       reb_info:
-        this.data.extraProperties
-          ?.filter((p) => p.category === 'REB_statement')[0]
-          ?.values.map((a) => a.value) || '',
-      reb_number: this.data.reb_number || '',
+        this.data.privacy === open
+          ? readExtraProperties(this.data, 'reb_info')
+          : '',
       experimentsFunctionAssessed:
         readExtraProperties(this.data, 'experimentFunctionAssessed') || [],
       experimentsLanguages:
@@ -186,19 +128,19 @@ class DatsToForm {
         readExtraProperties(this.data, 'experimentAdditionalRequirements') || []
     }
 
-    if (json.logo.includes('www')) {
-      json.logo = {
-        type: 'url',
-        url: json.logo,
-        fileName: ''
-      }
-    } else {
-      json.logo = {
-        type: 'fileName',
-        url: '',
-        fileName: json.logo
-      }
-    }
+    // if (json.logo.includes('www')) {
+    //   json.logo = {
+    //     type: 'url',
+    //     url: json.logo,
+    //     fileName: ''
+    //   }
+    // } else {
+    //   json.logo = {
+    //     type: 'fileName',
+    //     url: '',
+    //     fileName: json.logo
+    //   }
+    // }
 
     json.dates = json.dates.map((date) => {
       return Object.assign(date, { date: new Date(date.date) })
@@ -217,14 +159,7 @@ class DatsToForm {
     })
 
     // LORIS START
-    const lorisCategory = this.data.extraProperties.find((extraProperty) => {
-      return extraProperty.category === 'LORIS'
-    })
-
-    if (lorisCategory && lorisCategory.values) {
-      json.loris = lorisCategory.values[0]
-    }
-    console.log('json', json)
+    json.loris = readExtraProperties(this.data, 'loris')
     // LORIS END
 
     return json
