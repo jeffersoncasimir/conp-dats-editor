@@ -1,6 +1,6 @@
 /* eslint max-lines: "off" */
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Formik, Form } from 'formik'
 import {
   Grid,
@@ -105,7 +105,7 @@ const experimentSteps = [
 
 /* eslint max-statements: "off" */
 export function DatsEditorForm(props) {
-  const { validationSchema, initialActiveStep } = props
+  const { validationSchema, initialActiveStep, extraFieldSet } = props
   const classes = useStyles()
   const [activeStep, setActiveStep] = React.useState(initialActiveStep || 0)
   const [dats, setDats] = React.useState()
@@ -114,7 +114,7 @@ export function DatsEditorForm(props) {
     loris: defaultLorisDatsValues
   })
   const [isExperiment, setIsExperiment] = React.useState(false)
-  const [useLoris, setUseLoris] = React.useState(false)
+  const [useLoris, setUseLoris] = React.useState(extraFieldSet === 'loris')
   const steps = isExperiment ? experimentSteps : datasetSteps
   const postDatsSteps = isExperiment ? 2 : 2
   const [nextClicked, setNextClicked] = React.useState(false)
@@ -129,6 +129,11 @@ export function DatsEditorForm(props) {
   const shouldShowNextButton = (step) => step <= steps.length - postDatsSteps
   const shouldShowUploader = (step) =>
     step <= steps.length - (postDatsSteps + 1)
+
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('onload', useLoris)
+  }, [])
 
   const onDatsReceived = (json) => {
     const formData = new DatsToForm(json).getJson()
